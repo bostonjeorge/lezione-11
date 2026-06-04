@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="slides-format" content="viewport">
+    <title>Normativa alimenti - Lezione 1</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind v4 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- Tailwind theme tokens -->
+    <style type="text/tailwindcss">
+        @theme {
+            --color-bg: #FAF7F0;
+            --color-bg-deep: #F5F0E8;
+            --color-surface: #EDE0D4;
+            --color-text: #1F2933;
+            --color-text-secondary: #334E68;
+            --color-text-muted: #7B8794;
+            --color-accent-1: #22c55e;
+            --color-accent-2: #4ade80;
+            --color-accent-3: #a3e635;
+            --color-glass-bg: rgba(255,255,255,0.9);
+            --color-glass-border: rgba(0,0,0,0.06);
+            --color-vignette: rgba(0,0,0,0.06);
+            --font-display: 'Instrument Serif', Georgia, serif;
+            --font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+    </style>
+
+    <style>
+        :root { 
+            --color-bg: #FAF7F0; 
+            --color-text: #1F2933; 
+            --glow-color-rgb: 212,165,116;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { background: var(--color-bg); margin: 0; }
+        body { font-family: var(--font-body, 'Inter', system-ui, sans-serif); color: var(--color-text); overflow: hidden; height: 100vh; width: 100vw; }
+        .deck { width: 100vw; height: 100vh; position: relative; }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at top, #FAF7F0 0, #F5F0E8 45%, #E6D8C3 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: scale(0.96); transition: opacity 0.7s ease, transform 0.7s ease; pointer-events: none; overflow: hidden; }
+        .slide.active { opacity: 1; transform: scale(1); pointer-events: all; }
+        .slide > .content { position: relative; z-index: 2; width: 100%; max-width: 1100px; padding: clamp(1.5rem, 4vw, 3.5rem); margin-inline: auto; }
+
+        .nav-controls { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 16px; z-index: 100; background: rgba(15,23,42,0.9); backdrop-filter: blur(18px); padding: 10px 22px; border-radius: 999px; border: 1px solid rgba(148,163,184,0.5); box-shadow: 0 18px 45px rgba(15,23,42,0.85); }
+        .nav-btn { width: 38px; height: 38px; border: none; background: radial-gradient(circle at 30% 0, rgba(34,197,94,0.22), rgba(15,23,42,0.9)); color: #bbf7d0; border-radius: 999px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease; box-shadow: 0 0 0 rgba(34,197,94,0.0); }
+        .nav-btn:hover { background: radial-gradient(circle at 30% 0, rgba(34,197,94,0.35), rgba(15,23,42,1)); transform: translateY(-1px); box-shadow: 0 0 20px rgba(34,197,94,0.45); }
+        .slide-dots { display: flex; gap: 8px; }
+        .slide-dots .dot { width: 9px; height: 9px; border-radius: 999px; background: rgba(148,163,184,0.55); cursor: pointer; transition: background 0.3s ease, transform 0.25s ease, width 0.25s ease; }
+        .slide-dots .dot.active { background: #4ade80; transform: scale(1.25); width: 18px; }
+        .slide-counter { font-size: 0.8rem; color: #9ca3af; min-width: 50px; text-align: right; font-variant-numeric: tabular-nums; }
+
+        .reveal { opacity: 0; transform: translateY(18px); }
+
+        @keyframes float-slow {
+            0% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(60px, -50px) scale(1.08); }
+            50% { transform: translate(-40px, 40px) scale(0.94); }
+            75% { transform: translate(30px, 20px) scale(1.05); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes float-drift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(-50px, -60px) scale(1.12) rotate(2deg); }
+            66% { transform: translate(40px, 30px) scale(0.9) rotate(-2deg); }
+            100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+
+        .gradient-mesh { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); mix-blend-mode: normal; animation: float-slow 16s ease-in-out infinite; }
+        .blob:nth-child(2) { animation: float-drift 22s ease-in-out infinite; }
+        .blob:nth-child(3) { animation: float-slow 28s ease-in-out infinite reverse; }
+
+        .slide::before {
+            content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+            background-repeat: repeat; background-size: 256px 256px; opacity: 0.06; mix-blend-mode: soft-light;
+        }
+        .slide::after {
+            content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 45%, var(--color-vignette) 100%);
+        }
+
+        .mouse-spotlight { position: fixed; inset: 0; z-index: 1; pointer-events: none; mix-blend-mode: normal; }
+
+        .emoji-hero { font-size: clamp(3.2rem, 8vw, 4.6rem); margin-bottom: 1rem; animation: float 3s ease-in-out infinite; }
+
+        .text-glow { text-shadow: 0 0 22px rgba(var(--glow-color-rgb), 0.65), 0 0 46px rgba(var(--glow-color-rgb), 0.25); }
+        @keyframes glow-pulse {
+            0%, 100% { text-shadow: 0 0 18px rgba(var(--glow-color-rgb), 0.35), 0 0 40px rgba(var(--glow-color-rgb), 0.18); }
+            50% { text-shadow: 0 0 30px rgba(var(--glow-color-rgb), 0.85), 0 0 70px rgba(var(--glow-color-rgb), 0.35); }
+        }
+        .glow-pulse { animation: glow-pulse 3.2s ease-in-out infinite; }
+
+        .glass-card {
+            background: radial-gradient(circle at 0 0, rgba(148,163,184,0.18), transparent 55%),
+                        radial-gradient(circle at 100% 100%, rgba(34,197,94,0.25), transparent 60%),
+                        var(--color-glass-bg);
+            border-radius: 1.25rem;
+            border: 1px solid var(--color-glass-border);
+            box-shadow: 0 24px 60px rgba(15,23,42,0.95);
+        }
+
+        .glass-soft {
+            background: radial-gradient(circle at 0 0, rgba(255,255,255,0.85), transparent 55%),
+                        radial-gradient(circle at 100% 100%, rgba(212,165,116,0.25), transparent 60%),
+                        var(--color-glass-bg);
+            border-radius: 1.25rem;
+            border: 1px solid var(--color-glass-border);
+            box-shadow: 0 18px 45px rgba(148,121,93,0.45);
+        }
+
+        .pill {
+            border-radius: 999px;
+            border: 1px solid rgba(148,163,184,0.6);
+            padding: 0.25rem 0.85rem;
+            font-size: 0.7rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+        }
+
+        .dot-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border-radius: 999px;
+            padding: 0.25rem 0.7rem;
+            background: rgba(22,163,74,0.14);
+            color: #bbf7d0;
+            font-size: 0.75rem;
+        }
+
+        .dot-pill span {
+            width: 0.5rem; height: 0.5rem; border-radius: 999px; background: #4ade80;
+        }
+
+        .border-left-accent {
+            border-left-width: 3px;
+            border-left-style: solid;
+            border-image: linear-gradient(to bottom, #22c55e, #4ade80) 1;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+        }
+    </style>
+</head>
+<body>
+<div class="mouse-spotlight"></div>
+<div class="deck">
+
+    <!-- SLIDE 1: Titolo corso e lezione 1 -->
+    <div class="slide slide-1 active" data-slide="1">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:520px;height:520px;top:-140px;right:-130px;background:#22c55e;opacity:0.22;"></div>
+            <div class="blob" style="width:340px;height:340px;bottom:-120px;left:-80px;background:#4ade80;opacity:0.18;"></div>
+            <div class="blob" style="width:260px;height:260px;top:52%;left:14%;background:#a3e635;opacity:0.16;"></div>
+        </div>
+        <canvas class="particle-canvas" style="position:absolute;inset:0;z-index:1;"></canvas>
+        <div class="content text-center">
+            <div class="emoji-hero reveal">🥗</div>
+            <img class="reveal mx-auto rounded-2xl shadow-xl mb-5 max-h-[220px] object-cover" src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/a2bfc3324bfe12a37331372a7a770fa56e235957.jpg" alt="Assortimento di frutta e verdura fresca">
+            <h1 class="reveal font-display text-[clamp(2.7rem,5.4vw,4.4rem)] font-black tracking-tight bg-linear-to-br from-accent-1 via-accent-2 to-accent-1 bg-clip-text text-transparent text-balance mb-4">
+                Normativa su manipolazione e conservazione degli alimenti
+            </h1>
+            <p class="reveal text-[clamp(0.9rem,1.2vw,1.1rem)] text-text-muted tracking-[0.35em] uppercase">
+                Lezione 1 · Sicurezza alimentare e Reg. (CE) 178/2002
+            </p>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: Perché la sicurezza alimentare è centrale -->
+    <div class="slide slide-2" data-slide="2">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:380px;height:380px;top:-110px;right:-90px;background:#22c55e;opacity:0.16;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.12;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-10 reveal">
+                <img class="reveal float-right ml-6 mb-4 rounded-2xl shadow-md max-w-[220px] object-cover" src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/57ac426bb1486d159d219dbbbbf2b8cad6654637.jpg" alt="Frutta e verdura assortite viste dall'alto" />
+                <p class="pill text-text-muted mb-4">Contesto</p>
+                <h2 class="font-display text-[clamp(1.9rem,3.6vw,2.6rem)] font-bold mb-4 text-balance">
+                    Perch&eacute; la sicurezza alimentare è al centro del sistema alimentare?
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>I prodotti alimentari attraversano oggi filiere lunghe e complesse, dalla produzione alla commercializzazione.</li>
+                    <li>La sicurezza alimentare incide su salute pubblica, fiducia del consumatore e competitivit&agrave; delle imprese.</li>
+                    <li>I controlli non possono pi&ugrave; limitarsi al prodotto finito, ma devono coinvolgere l&rsquo;intero processo produttivo.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: Obiettivi formativi della lezione 1 -->
+    <div class="slide slide-3" data-slide="3">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-100px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Obiettivi didattici</p>
+                <h2 class="font-display text-[clamp(1.9rem,3.4vw,2.5rem)] font-bold mb-5 text-balance">
+                    Cosa dovresti saper fare alla fine della lezione 1
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Definire il concetto di sicurezza alimentare in senso ampio, oltre la sola dimensione igienico‑microbiologica.</li>
+                    <li>Descrivere in sintesi il percorso politico‑normativo dell&rsquo;Unione Europea (Libro Bianco &rarr; Reg. (CE) 178/2002).</li>
+                    <li>Individuare il ruolo e le responsabilit&agrave; dell&rsquo;operatore del settore alimentare (OSA) nel sistema di sicurezza alimentare.</li>
+                    <li>Comprendere perch&eacute; il Pacchetto Igiene e il metodo HACCP rappresentano la traduzione operativa di questi principi.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: Dal controllo del prodotto al controllo del processo -->
+    <div class="slide slide-4" data-slide="4">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:380px;height:380px;top:-110px;right:-90px;background:#22c55e;opacity:0.16;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.12;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <img class="reveal float-right ml-6 mb-4 rounded-2xl shadow-md max-w-[210px] object-cover" src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/d01c366c1085a41bb114ec506733807e7838786a.jpg" alt="Cassetta di frutta e verdura" />
+                <p class="pill text-text-muted mb-4">Cambio di paradigma</p>
+                <h2 class="font-display text-[clamp(1.9rem,3.4vw,2.5rem)] font-bold mb-4 text-balance">
+                    Dal prodotto finito al controllo del processo
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Il controllo esclusivo sul prodotto finito non &egrave; pi&ugrave; sufficiente a garantire un livello adeguato di sicurezza.</li>
+                    <li>L&rsquo;attenzione si sposta sul processo: progettazione, produzione, trasformazione, trasporto e conservazione.</li>
+                    <li>La prevenzione del rischio diventa l&rsquo;elemento centrale, in sostituzione di un approccio puramente ispettivo e repressivo.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: Definizione FAO/World Food Summit -->
+    <div class="slide slide-5" data-slide="5">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:380px;height:380px;top:-110px;right:-90px;background:#22c55e;opacity:0.16;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.12;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Definizione chiave</p>
+                <h2 class="font-display text-[clamp(1.9rem,3.4vw,2.5rem)] font-bold mb-4 text-balance">
+                    Sicurezza alimentare secondo il World Food Summit (1996)
+                </h2>
+                <p class="text-[0.98rem] leading-relaxed text-text-secondary mb-4">
+                    Il World Food Summit del 1996 definisce la sicurezza alimentare come la situazione in cui tutte le persone, in ogni momento,
+                    hanno accesso fisico, sociale ed economico ad alimenti sufficienti, sicuri e nutrienti che soddisfino le loro necessit&agrave; e preferenze alimentari
+                    per condurre una vita attiva e sana.
+                </p>
+                <ul class="list-disc list-outside pl-5 space-y-2 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Centralit&agrave; dell&rsquo;accesso fisico, sociale ed economico al cibo.</li>
+                    <li>Enfasi su quantit&agrave;, sicurezza e valore nutrizionale degli alimenti.</li>
+                    <li>Riferimento esplicito alle preferenze alimentari e alla qualit&agrave; della vita.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: Cosa significa sufficienti, sicuri, nutrienti -->
+    <div class="slide slide-6" data-slide="6">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Analisi della definizione</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    &ldquo;Sufficienti, sicuri, nutrienti&rdquo;: tre aggettivi, tre dimensioni
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li><strong>Sufficienti</strong>: la quantit&agrave; di alimenti deve coprire il fabbisogno della popolazione e prevenire situazioni di insicurezza alimentare quantitativa.</li>
+                    <li><strong>Sicuri</strong>: gli alimenti non devono esporre il consumatore a rischi inaccettabili di natura biologica, chimica o fisica.</li>
+                    <li><strong>Nutrienti</strong>: gli alimenti devono contribuire a un buon stato nutrizionale, rispondendo ai bisogni fisiologici delle diverse fasce di popolazione.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: Sicurezza alimentare concetto multidimensionale -->
+    <div class="slide slide-7" data-slide="7">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Oltre l&rsquo;igiene</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    La sicurezza alimentare è un concetto multidimensionale
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Integra aspetti sanitari, nutrizionali, economici, sociali e culturali.</li>
+                    <li>Non coincide con la sola assenza di microrganismi patogeni negli alimenti.</li>
+                    <li>Comprende la possibilit&agrave; effettiva, per tutte le persone, di accedere a cibo adeguato alle proprie esigenze e preferenze.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: Disponibilità -->
+    <div class="slide slide-8" data-slide="8">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Dimensione 1</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Disponibilità di alimenti
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Riguarda l&rsquo;approvvigionamento di una quantit&agrave; di alimenti sufficiente e di qualit&agrave; adeguata.</li>
+                    <li>Dipende dalla produzione interna, dalle importazioni e da eventuali aiuti alimentari.</li>
+                    <li>Carestie, conflitti, crisi climatiche o problemi logistici possono compromettere la disponibilit&agrave; di cibo.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 9: Accesso -->
+    <div class="slide slide-9" data-slide="9">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Dimensione 2</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Accesso agli alimenti
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Riguarda le risorse economiche, sociali e fisiche che permettono di ottenere il cibo disponibile.</li>
+                    <li>Poverta, disoccupazione, marginalit&agrave; sociale o isolamento geografico possono limitare l&rsquo;accesso al cibo.</li>
+                    <li>L&rsquo;accesso &egrave; un elemento centrale nella definizione di diritto al cibo a livello internazionale.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 10: Utilizzo e stabilità -->
+    <div class="slide slide-10" data-slide="10">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Dimensioni 3 e 4</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Utilizzo degli alimenti e stabilità nel tempo
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li><strong>Utilizzo</strong>: comprende le condizioni igienico‑sanitarie e nutrizionali che permettono di raggiungere un buono stato di salute.</li>
+                    <li><strong>Stabilità</strong>: indica la reperibilit&agrave; costante delle risorse alimentari nel tempo, indipendentemente da shock economici, climatici o di produzione.</li>
+                    <li>Instabilit&agrave; politica, crisi economiche o eventi estremi possono compromettere la stabilit&agrave; anche in contesti oggi sicuri.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 11: Ruolo UE -->
+    <div class="slide slide-11" data-slide="11">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Scenario europeo</p>
+                <img class="reveal float-right ml-6 mb-4 rounded-2xl shadow-md max-w-[230px] object-cover" src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/735de1f494ba2719992b9d99721ef00cf55178e6.jpg" alt="Banco di mercato con frutta e verdura" />
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    L&rsquo;Unione Europea e la sicurezza alimentare
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>L&rsquo;Unione Europea ha fatto della sicurezza alimentare una delle priorit&agrave; della propria agenda politica.</li>
+                    <li>Si tratta di un obiettivo trasversale: politica agricola comune, sviluppo rurale, ambiente, sanit&agrave; pubblica, tutela dei consumatori e mercato interno.</li>
+                    <li>L&rsquo;UE mira a garantire standard elevati e omogenei di sicurezza alimentare in tutti gli Stati membri.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 12: Perché norme comuni -->
+    <div class="slide slide-12" data-slide="12">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Armonizzazione</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Perch&eacute; servono norme comuni in tutta l&rsquo;UE?
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Le filiere alimentari sono sempre pi&ugrave; lunghe e transnazionali: produzione, trasformazione e consumo possono avvenire in Paesi diversi.</li>
+                    <li>Norme nazionali molto diverse potrebbero generare livelli di tutela non omogenei e ostacolare il mercato interno.</li>
+                    <li>Un quadro normativo comune garantisce la libera circolazione degli alimenti, mantenendo un elevato livello di protezione per il consumatore.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 13: Dalla frammentazione al riordino -->
+    <div class="slide slide-13" data-slide="13">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Evoluzione normativa</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Dalla frammentazione al riordino della legislazione alimentare
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>In passato la materia era regolata da numerose direttive settoriali e norme nazionali, non sempre armonizzate tra loro.</li>
+                    <li>Il Libro Bianco rappresenta l&rsquo;avvio di un percorso di sistematizzazione e razionalizzazione delle norme sulla sicurezza alimentare.</li>
+                    <li>Questo percorso sfocia nel Reg. (CE) 178/2002, seguito dal Pacchetto Igiene e dalle altre norme specifiche.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 14: Crisi alimentari -->
+    <div class="slide slide-14" data-slide="14">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Lezioni dalle crisi</p>
+                <img class="reveal float-right ml-6 mb-4 rounded-2xl shadow-md max-w-[230px] object-cover" src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/df72d29a63e0f84a11dbbbc913872c02cfbd51ec.jpg" alt="Preparazione di alimenti in cucina professionale" />
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Crisi alimentari, allarmi e richiesta di trasparenza
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Gravi crisi alimentari (es. BSE, contaminazioni da diossine) hanno minato la fiducia dei cittadini nei sistemi di controllo.</li>
+                    <li>L&rsquo;opinione pubblica ha richiesto maggiore trasparenza, responsabilit&agrave; e prevenzione lungo tutta la filiera.</li>
+                    <li>Il nuovo impianto normativo europeo risponde a questa richiesta con un approccio integrato basato su rischio, tracciabilit&agrave; e responsabilit&agrave; dell&rsquo;OSA.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 15: Libro Bianco -->
+    <div class="slide slide-15" data-slide="15">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Documento chiave</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Il Libro Bianco sulla sicurezza alimentare (2000)
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>&Egrave; un documento della Commissione che delinea la strategia complessiva dell&rsquo;UE in materia di sicurezza alimentare.</li>
+                    <li>Stabilisce che la politica europea degli alimenti deve essere fondata su standard di sicurezza per tutelare la salute dei consumatori.</li>
+                    <li>Evidenzia i molteplici impatti economici, sociali e ambientali della produzione e del consumo di alimenti.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 16: Messaggi chiave Libro Bianco -->
+    <div class="slide slide-16" data-slide="16">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Principi del Libro Bianco</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    I messaggi fondamentali del Libro Bianco
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>La produzione e il consumo di alimenti sono fatti centrali per ogni societ&agrave;, con ripercussioni economiche, sociali e ambientali.</li>
+                    <li>Le condizioni e la qualit&agrave; dell&rsquo;ambiente influenzano i diversi livelli della catena alimentare.</li>
+                    <li>&Egrave; necessario un approccio integrato che consideri l&rsquo;intera catena, dal campo alla tavola.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 17: Ogni anello deve essere forte -->
+    <div class="slide slide-17" data-slide="17">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Approccio filiera</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Ogni anello della catena alimentare deve essere forte
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>La catena della produzione alimentare &egrave; sempre pi&ugrave; complessa.</li>
+                    <li>Ogni singolo anello deve essere altrettanto forte degli altri per garantire la tutela della salute dei consumatori.</li>
+                    <li>Da questa visione nasce l&rsquo;approccio &ldquo;dai campi alla tavola&rdquo; che ispira il successivo assetto normativo.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 18: Dal Libro Bianco al 178/2002 -->
+    <div class="slide slide-18" data-slide="18">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Dal principio alla norma</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Dal Libro Bianco al Regolamento (CE) 178/2002
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>I principi generali delineati nel Libro Bianco trovano piena espressione giuridica nel Reg. (CE) 178/2002.</li>
+                    <li>Il 178/2002 stabilisce i principi e i requisiti generali della legislazione alimentare e istituisce l&rsquo;Autorit&agrave; europea per la sicurezza alimentare.</li>
+                    <li>Rappresenta il regolamento &ldquo;quadro&rdquo; su cui si innesteranno il Pacchetto Igiene e le altre norme settoriali.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 19: Finalità generali 178/2002 -->
+    <div class="slide slide-19" data-slide="19">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Reg. (CE) 178/2002</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Finalità generali del Regolamento 178/2002
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Fissare i principi e i requisiti generali della legislazione alimentare dell&rsquo;Unione Europea.</li>
+                    <li>Istituire l&rsquo;Autorit&agrave; europea per la sicurezza alimentare (EFSA) come organismo scientifico indipendente.</li>
+                    <li>Stabilire procedure e meccanismi per decisioni efficaci nel campo della sicurezza di alimenti e mangimi.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 20: Obiettivo principale 178/2002 -->
+    <div class="slide slide-20" data-slide="20">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Tutela del consumatore</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Obiettivo principale del Reg. (CE) 178/2002
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Garantire un livello elevato di tutela della salute umana in relazione agli alimenti.</li>
+                    <li>Proteggere gli interessi dei consumatori rispetto alla sicurezza, alla qualit&agrave; e alla correttezza delle informazioni sugli alimenti.</li>
+                    <li>Assicurare che le decisioni in materia di sicurezza alimentare si basino su un solido fondamento scientifico.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 21: Campo di applicazione -->
+    <div class="slide slide-21" data-slide="21">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Ambito di applicazione</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    A cosa si applica il Reg. (CE) 178/2002?
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Si applica a tutte le fasi di produzione, trasformazione e distribuzione di alimenti e mangimi.</li>
+                    <li>Comprende le attivit&agrave; svolte prima e dopo la produzione, fino alla vendita o fornitura al consumatore finale.</li>
+                    <li>Essendo un regolamento, &egrave; direttamente applicabile e vincolante in tutti gli Stati membri dell&rsquo;UE.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 22: Relazione con Pacchetto Igiene -->
+    <div class="slide slide-22" data-slide="22">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Cornice normativa</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Il Reg. 178/2002 come cornice per il Pacchetto Igiene
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Il Reg. 178/2002 rappresenta la cornice generale entro cui si inseriscono i regolamenti del Pacchetto Igiene (852/2004, 853/2004, 854/2004, 882/2004).</li>
+                    <li>Questi regolamenti traducono in disposizioni operative i principi generali fissati dal 178/2002, soprattutto in materia di igiene e controlli.</li>
+                    <li>In Italia, ulteriori decreti legislativi disciplinano gli aspetti sanzionatori e applicativi.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 23: Definizione di alimento -->
+    <div class="slide slide-23" data-slide="23">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Definizioni chiave</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Che cosa si intende per &ldquo;alimento&rdquo; nel Reg. 178/2002?
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Alimento: qualsiasi sostanza o prodotto, trasformato, parzialmente trasformato o non trasformato, destinato ad essere ingerito da esseri umani.</li>
+                    <li>La definizione comprende anche bevande, gomme da masticare e qualsiasi sostanza, compresa l&rsquo;acqua, intenzionalmente incorporata negli alimenti durante produzione, preparazione o trattamento.</li>
+                    <li>Si tratta di una definizione ampia, pensata per includere tutte le tipologie di prodotti destinati al consumo umano.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 24: Cosa non è alimento -->
+    <div class="slide slide-24" data-slide="24">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Esclusioni</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Cosa non rientra nella definizione di alimento
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>Alcune categorie sono escluse: mangimi, animali vivi (salvo quelli preparati per l&rsquo;alimentazione), medicinali, cosmetici, tabacco e prodotti assimilati.</li>
+                    <li>Queste categorie sono disciplinate da normative specifiche diverse dal diritto alimentare.</li>
+                    <li>Conoscere cosa &egrave; e cosa non &egrave; &ldquo;alimento&rdquo; è essenziale per applicare correttamente le norme sulla sicurezza alimentare.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 25: Produzione primaria -->
+    <div class="slide slide-25" data-slide="25">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Definizioni chiave</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Produzione primaria nel Reg. (CE) 178/2002
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>La produzione primaria comprende tutte le fasi della produzione o della coltivazione dei prodotti primari.</li>
+                    <li>Include raccolto, mungitura e produzione zootecnica precedente la macellazione.</li>
+                    <li>Comprende anche caccia, pesca e raccolta di prodotti selvatici.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 26: Operatore del settore alimentare -->
+    <div class="slide slide-26" data-slide="26">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Soggetti coinvolti</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Chi è l&rsquo;operatore del settore alimentare (OSA)?
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>L&rsquo;OSA è la persona fisica o giuridica responsabile di garantire il rispetto della legislazione alimentare nell&rsquo;impresa da lui controllata.</li>
+                    <li>Pu&ograve; trattarsi di aziende agricole, industrie di trasformazione, aziende della distribuzione, ristorazione, ecc.</li>
+                    <li>La responsabilit&agrave; principale della sicurezza degli alimenti ricade sulle imprese, non soltanto sulle autorit&agrave; di controllo.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 27: Valutazione del rischio -->
+    <div class="slide slide-27" data-slide="27">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Gestione del rischio</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Valutazione del rischio nel Reg. (CE) 178/2002 (art. 11)
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>La valutazione del rischio &egrave; un processo scientifico articolato in quattro fasi.</li>
+                    <li>Comprende: individuazione del pericolo, caratterizzazione del pericolo, valutazione dell&rsquo;esposizione, caratterizzazione del rischio.</li>
+                    <li>Costituisce il fondamento scientifico delle decisioni in materia di sicurezza alimentare.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 28: Gestione del rischio -->
+    <div class="slide slide-28" data-slide="28">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-110px;right:-90px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-card p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Gestione del rischio</p>
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Gestione del rischio nel Reg. (CE) 178/2002 (art. 12)
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li>La gestione del rischio è un processo distinto dalla valutazione del rischio.</li>
+                    <li>Consiste nell&rsquo;esaminare le possibili misure di gestione, consultare le parti interessate e scegliere le azioni di prevenzione e controllo.</li>
+                    <li>Tiene conto della valutazione del rischio e di altri fattori pertinenti (economici, sociali, etici).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 29: Alimento a rischio e responsabilità OSA -->
+    <div class="slide slide-29" data-slide="29">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-120px;right:-100px;background:#22c55e;opacity:0.15;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-90px;left:-70px;background:#4ade80;opacity:0.11;"></div>
+        </div>
+        <div class="content">
+            <div class="max-w-3xl glass-soft p-8 md:p-9 reveal">
+                <p class="pill text-text-muted mb-4">Articoli 14 e 17</p>
+                <img class="reveal float-right ml-6 mb-4 rounded-2xl shadow-md max-w-[230px] object-cover" src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/54bcbd0d9e3d8b1bc3cf02d1f9f642d9546da84e.jpg" alt="Impiattamento di un piatto in cucina professionale" />
+                <h2 class="font-display text-[clamp(1.8rem,3.2vw,2.4rem)] font-bold mb-4 text-balance">
+                    Alimento a rischio e responsabilità dell&rsquo;OSA
+                </h2>
+                <ul class="list-disc list-outside pl-5 space-y-3 text-[0.98rem] leading-relaxed text-text-secondary">
+                    <li><strong>Alimenti a rischio (art. 14)</strong>: non possono essere immessi sul mercato alimenti dannosi per la salute o inadatti al consumo umano (putrefatti, deteriorati, decomposti, contaminati).</li>
+                    <li>Laddove un alimento sia considerato a rischio, l&rsquo;intera partita o lotto può essere considerata a rischio in via presuntiva.</li>
+                    <li><strong>Responsabilità dell&rsquo;OSA (art. 17)</strong>: gli operatori devono garantire che alimenti e mangimi rispettino la legislazione in tutte le fasi della filiera.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 30: Tracciabilità e ponte a HACCP -->
+    <div class="slide slide-30" data-slide="30">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:420px;height:420px;top:-130px;right:-110px;background:#22c55e;opacity:0.2;"></div>
+            <div class="blob" style="width:280px;height:280px;bottom:-100px;left:-80px;background:#4ade80;opacity:0.14;"></div>
+            <div class="blob" style="width:260px;height:260px;top:55%;left:18%;background:#a3e635;opacity:0.13;"></div>
+        </div>
+        <canvas class="particle-canvas" style="position:absolute;inset:0;z-index:1;"></canvas>
+        <div class="content">
+            <div class="max-w-3xl mx-auto glass-card p-8 md:p-9 text-center reveal">
+                <p class="pill text-text-muted mb-4">Art. 18 e prospettive</p>
+                <h2 class="font-display text-[clamp(2rem,3.6vw,2.7rem)] font-bold mb-4 text-balance">
+                    Tracciabilità e collegamento con Pacchetto Igiene e HACCP
+                </h2>
+                <p class="text-[0.98rem] leading-relaxed text-text-secondary mb-4">
+                    L&rsquo;art. 18 del Reg. (CE) 178/2002 introduce l&rsquo;obbligo di tracciabilità: gli operatori devono poter identificare chi ha fornito loro alimenti, mangimi o sostanze destinate ad entrare in un alimento e a chi hanno fornito i loro prodotti.
+                </p>
+                <p class="text-[0.98rem] leading-relaxed text-text-secondary mb-4">
+                    Nelle prossime lezioni vedremo come il Pacchetto Igiene e il metodo HACCP traducono in procedure operative i principi di responsabilità, valutazione del rischio e tracciabilità introdotti dal Reg. 178/2002.
+                </p>
+                <div class="inline-flex items-center gap-2 mt-2 text-xs text-emerald-200/80">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Fine lezione 1 · Introduzione a sicurezza alimentare e Reg. 178/2002</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="nav-controls">
+    <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+    <div class="slide-dots" id="dots"></div>
+    <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+    <span class="slide-counter" id="counter">1 / 30</span>
+</div>
+
+<script>
+    let current = 1;
+    const total = document.querySelectorAll('.slide').length;
+    const dotsContainer = document.getElementById('dots');
+    const counter = document.getElementById('counter');
+    for (let i = 1; i <= total; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (i === 1 ? ' active' : '');
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+    }
+    function goToSlide(n) {
+        const prev = document.querySelector('.slide.active');
+        const next = document.querySelector(`.slide[data-slide="${n}"]`);
+        if (prev) prev.classList.remove('active');
+        if (next) {
+            next.classList.add('active');
+            animateSlide(next);
+        }
+        current = n;
+        updateNav();
+    }
+    function changeSlide(dir) {
+        let next = current + dir;
+        if (next < 1) next = total;
+        if (next > total) next = 1;
+        goToSlide(next);
+    }
+    function updateNav() {
+        document.querySelectorAll('.dot').forEach((d, i) => {
+            d.classList.toggle('active', i + 1 === current);
+        });
+        counter.textContent = current + ' / ' + total;
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+            e.preventDefault();
+            changeSlide(1);
+        }
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            changeSlide(-1);
+        }
+    });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+    });
+    document.addEventListener('touchend', (e) => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+    });
+
+    function animateSlide(slide) {
+        slide.querySelectorAll('.reveal').forEach((el, i) => {
+            el.style.transition = 'none';
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(18px)';
+            el.offsetHeight;
+            const delay = i * 0.08;
+            el.style.transition = `opacity 0.35s ease ${delay}s, transform 0.35s ease ${delay}s`;
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0px)';
+        });
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        const spotlight = document.querySelector('.mouse-spotlight');
+        if (spotlight) {
+            const rgb = getComputedStyle(document.documentElement).getPropertyValue('--glow-color-rgb').trim() || '34,197,94';
+            spotlight.style.background = `radial-gradient(520px circle at ${e.clientX}px ${e.clientY}px, rgba(${rgb}, 0.18), transparent 55%)`;
+        }
+    });
+
+    function initParticles(canvas, options) {
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        const interactive = options.interactive !== false;
+        const count = options.count || (interactive ? 60 : 20);
+        let mx = -1000, my = -1000;
+        const rgb = getComputedStyle(document.documentElement).getPropertyValue('--glow-color-rgb').trim() || '34,197,94';
+        const [r, g, b] = rgb.split(',').map(Number);
+        const particles = Array.from({ length: count }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.35,
+            vy: (Math.random() - 0.5) * 0.35,
+            size: Math.random() * 2.4 + 0.9,
+            alpha: Math.random() * 0.4 + 0.1
+        }));
+        if (interactive) {
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mx = e.clientX - rect.left;
+                my = e.clientY - rect.top;
+            });
+            canvas.addEventListener('mouseleave', () => {
+                mx = -1000; my = -1000;
+            });
+        }
+        (function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                if (interactive) {
+                    const dx = p.x - mx;
+                    const dy = p.y - my;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 140) {
+                        const force = (140 - dist) / 140 * 2.1;
+                        p.vx += (dx / dist) * force * 0.08;
+                        p.vy += (dy / dist) * force * 0.08;
+                    }
+                }
+                p.vx *= 0.98;
+                p.vy *= 0.98;
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${r},${g},${b},${p.alpha})`;
+                ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        })();
+    }
+
+    document.querySelectorAll('.particle-canvas').forEach(c => initParticles(c, { interactive: true, count: 60 }));
+
+    try { animateSlide(document.querySelector('.slide.active')); } catch(e) { console.warn('Initial animation error:', e); }
+</script>
+
+</body>
+</html>
